@@ -20,6 +20,8 @@ import { resolveNLSConfiguration } from './vs/base/node/nls.js';
 import { getUNCHost, addUNCHostToAllowlist } from './vs/base/node/unc.js';
 import { INLSConfiguration } from './vs/nls.js';
 import { NativeParsedArgs } from './vs/platform/environment/common/argv.js';
+import { generateDeviceCode, debug } from '@bitdrift/electron';
+import './vs/bitdrift.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -148,6 +150,12 @@ if (process.platform === 'win32' || process.platform === 'linux') {
 
 // Load our code once ready
 app.once('ready', function () {
+	debug('App ready');
+	debug('bitdrift for Electron is ready');
+	generateDeviceCode().then((deviceCode) => {
+		console.log('Device code:', deviceCode);
+	});
+
 	if (args['trace']) {
 		const traceOptions = {
 			categoryFilter: args['trace-category-filter'] || '*',
