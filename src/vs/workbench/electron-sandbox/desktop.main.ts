@@ -63,7 +63,6 @@ import { applyZoom } from '../../platform/window/electron-sandbox/window.js';
 import { mainWindow } from '../../base/browser/window.js';
 import { Registry } from '../../platform/registry/common/platform.js';
 import { IConfigurationRegistry, Extensions } from '../../platform/configuration/common/configurationRegistry.js';
-import { captureReplayScreen } from '../../code/electron-sandbox/processExplorer/captureReplayScreen.js';
 
 export class DesktopMain extends Disposable {
 
@@ -417,21 +416,6 @@ export interface IDesktopMain {
 
 export function main(configuration: INativeWindowConfiguration): Promise<void> {
 	const workbench = new DesktopMain(configuration);
-
-
-	let lastTick = Date.now();
-
-	const tick = () => {
-		const now = Date.now();
-		if (now - lastTick > 1000) {
-			lastTick = now;
-			captureReplayScreen();
-		}
-
-		mainWindow.requestIdleCallback(tick);
-	};
-
-	mainWindow.requestIdleCallback(tick);
 
 	return workbench.open();
 }

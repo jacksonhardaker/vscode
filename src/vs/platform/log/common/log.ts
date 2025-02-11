@@ -331,10 +331,10 @@ export abstract class AbstractMessageLogger extends AbstractLogger implements IL
 				const array = Array.prototype.slice.call(arguments) as any[];
 				array[0] = message.stack;
 				this.log(LogLevel.Error, format(array));
-				ipcRenderer?.send?.('vscode:bitdrift:log', 4, array[0], args);
+				ipcRenderer?.send?.('vscode:bitdrift:log', 4, format(array));
 			} else {
 				this.log(LogLevel.Error, format([message, ...args]));
-				ipcRenderer?.send?.('vscode:bitdrift:log', 4, message, args);
+				ipcRenderer?.send?.('vscode:bitdrift:log', 4, format([message, ...args]));
 			}
 		}
 	}
