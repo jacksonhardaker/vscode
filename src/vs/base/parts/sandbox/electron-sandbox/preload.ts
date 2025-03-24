@@ -8,6 +8,22 @@
 (function () {
 
 	const { ipcRenderer, webFrame, contextBridge, webUtils } = require('electron');
+	const { initRenderer } = require('@bitdrift/electron/renderer');
+
+	// Initialize bitdrift in the renderer process
+	console.log('Initializing bitdrift logger in the renderer process');
+	initRenderer({
+		autoExposeInMainWorld: {
+			channelPrefix: 'vscode',
+			exposeAs: 'logger'
+		},
+		experimental: {
+			sessionReplayConfiguration: {
+				channelPrefix: 'vscode',
+				targetWindow: window
+			}
+		}
+	});
 
 	type ISandboxConfiguration = import('../common/sandboxTypes.js').ISandboxConfiguration;
 

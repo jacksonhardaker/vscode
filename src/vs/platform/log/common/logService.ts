@@ -7,6 +7,8 @@ import { Disposable } from '../../../base/common/lifecycle.js';
 import { Event } from '../../../base/common/event.js';
 import { ILogger, ILogService, LogLevel, MultiplexLogger } from './log.js';
 
+const ipcRenderer = typeof window === 'undefined' ? null : (window as any).vscode.ipcRenderer;
+
 export class LogService extends Disposable implements ILogService {
 
 	declare readonly _serviceBrand: undefined;
@@ -33,22 +35,27 @@ export class LogService extends Disposable implements ILogService {
 
 	trace(message: string, ...args: any[]): void {
 		this.logger.trace(message, ...args);
+		ipcRenderer?.send('vscode:bitdrift:log', 0, message, args);
 	}
 
 	debug(message: string, ...args: any[]): void {
 		this.logger.debug(message, ...args);
+		ipcRenderer?.send('vscode:bitdrift:log', 1, message, args);
 	}
 
 	info(message: string, ...args: any[]): void {
 		this.logger.info(message, ...args);
+		ipcRenderer?.send('vscode:bitdrift:log', 2, message, args);
 	}
 
 	warn(message: string, ...args: any[]): void {
 		this.logger.warn(message, ...args);
+		ipcRenderer?.send('vscode:bitdrift:log', 3, message, args);
 	}
 
 	error(message: string | Error, ...args: any[]): void {
 		this.logger.error(message, ...args);
+		ipcRenderer?.send('vscode:bitdrift:log', 4, message, args);
 	}
 
 	flush(): void {

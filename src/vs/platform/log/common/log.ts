@@ -18,6 +18,8 @@ import { RawContextKey } from '../../contextkey/common/contextkey.js';
 import { IEnvironmentService } from '../../environment/common/environment.js';
 import { createDecorator } from '../../instantiation/common/instantiation.js';
 
+const ipcRenderer = typeof window === 'undefined' ? null : (window as any).vscode.ipcRenderer;
+
 export const ILogService = createDecorator<ILogService>('logService');
 export const ILoggerService = createDecorator<ILoggerService>('loggerService');
 
@@ -298,24 +300,28 @@ export abstract class AbstractMessageLogger extends AbstractLogger implements IL
 	trace(message: string, ...args: any[]): void {
 		if (this.canLog(LogLevel.Trace)) {
 			this.log(LogLevel.Trace, format([message, ...args], true));
+			ipcRenderer?.send?.('vscode:bitdrift:log', 0, message, args);
 		}
 	}
 
 	debug(message: string, ...args: any[]): void {
 		if (this.canLog(LogLevel.Debug)) {
 			this.log(LogLevel.Debug, format([message, ...args]));
+			ipcRenderer?.send?.('vscode:bitdrift:log', 1, message, args);
 		}
 	}
 
 	info(message: string, ...args: any[]): void {
 		if (this.canLog(LogLevel.Info)) {
 			this.log(LogLevel.Info, format([message, ...args]));
+			ipcRenderer?.send?.('vscode:bitdrift:log', 2, message, args);
 		}
 	}
 
 	warn(message: string, ...args: any[]): void {
 		if (this.canLog(LogLevel.Warning)) {
 			this.log(LogLevel.Warning, format([message, ...args]));
+			ipcRenderer?.send?.('vscode:bitdrift:log', 3, message, args);
 		}
 	}
 
@@ -325,8 +331,10 @@ export abstract class AbstractMessageLogger extends AbstractLogger implements IL
 				const array = Array.prototype.slice.call(arguments) as any[];
 				array[0] = message.stack;
 				this.log(LogLevel.Error, format(array));
+				ipcRenderer?.send?.('vscode:bitdrift:log', 4, format(array));
 			} else {
 				this.log(LogLevel.Error, format([message, ...args]));
+				ipcRenderer?.send?.('vscode:bitdrift:log', 4, format([message, ...args]));
 			}
 		}
 	}
